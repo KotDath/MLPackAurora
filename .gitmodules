@@ -13,7 +13,7 @@
 [submodule "thirdparty/armadillo"]
 	path = thirdparty/armadillo
 	url = https://gitlab.com/conradsnicta/armadillo-code
-	ignore = untracked
+	ignore = dirty
 [submodule "thirdparty/ensmallen"]
 	path = thirdparty/ensmallen
 	url = https://github.com/mlpack/ensmallen

@@ -53,7 +53,29 @@ include_directories(${openblas_SOURCE_DIR})
 
 #cereal build
 add_library(cereal_interface INTERFACE)
-target_include_directories(cereal_interface INTERFACE thirdparty/cereal)
+target_include_directories(cereal_interface INTERFACE thirdparty/cereal/include)
+
+#ensmallen build
+add_library(ensmallen_interface INTERFACE)
+target_include_directories(ensmallen_interface INTERFACE thirdparty/ensmallen/include)
+
+#armadillo build
+
+set(OPENBLAS_PATH thirdparty/openblas/lib)
+configure_file(${CMAKE_SOURCE_DIR}/thirdparty/patches/ARMA_FindOpenBLAS.cmake.in ${CMAKE_SOURCE_DIR}/thirdparty/armadillo/cmake_aux/Modules/ARMA_FindOpenBLAS.cmake)
+set(armadillo_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/armadillo)
+set(BUILD_SHARED_LIBS ON CACHE INTERNAL "Build SHARED libraries")
+set(DETECT_HDF5 OFF CACHE INTERNAL "DETECT_HDF5")
+set(OPENBLAS_PROVIDES_LAPACK ON CACHE INTERNAL "openblas provides lapack")
+set(ARMA_USE_LAPACK ON CACHE INTERNAL "armadillo use lapack")
+set(ARMA_USE_BLAS ON CACHE INTERNAL "armadillo use blas")
+add_subdirectory(${armadillo_SOURCE_DIR} ${armadillo_SOURCE_DIR} EXCLUDE_FROM_ALL)
+include_directories(${armadillo_SOURCE_DIR}/include)
+
+#mlpack build
+add_library(mlpack_interface INTERFACE)
+target_include_directories(mlpack_interface INTERFACE thirdparty/mlpack/src)
+
 
 add_library(OpenBLAS::OpenBLAS SHARED IMPORTED)
 set_target_properties(OpenBLAS::OpenBLAS PROPERTIES
@@ -133,6 +155,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt5::Quick
     OpenBLAS::OpenBLAS
     cereal_interface
+    ensmallen_interface
+    mlpack_interface
     ${AURORA_LDFLAGS}
 )
 
