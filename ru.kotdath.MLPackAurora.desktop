@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=ru.kotdath.MLPackAurora
+Exec=/usr/bin/ru.kotdath.MLPackAurora
+Name=MLPackAurora
+Name[ru]=MLPackAurora
+
+[X-Application]
+Permissions=
+OrganizationName=ru.kotdath
+ApplicationName=MLPackAurora
+ExecDBus=/usr/bin/ru.kotdath.MLPackAurora
