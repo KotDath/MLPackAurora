@@ -3,6 +3,7 @@
 
 #include <auroraapp.h>
 #include <QtQuick>
+#include <omp.h>
 #include <mlpack.hpp>
 
 using namespace mlpack;
@@ -10,6 +11,7 @@ using namespace ens;
 using namespace mlpack::rl;
 int main(int argc, char *argv[])
 {
+    omp_set_num_threads(1);
     // Set up the network.
     FFN<MeanSquaredError, GaussianInitialization> network(MeanSquaredError(),
     GaussianInitialization(0, 0.001));
