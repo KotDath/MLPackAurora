@@ -42,9 +42,172 @@
 <context>
     <name>MainPage</name>
     <message>
-        <location filename="../../MLPackAurora/qml/pages/MainPage.qml" line="13"/>
         <source>MLPackAurora</source>
-        <translation>MLPackAurora</translation>
+        <translation type="vanished">MLPackAurora</translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MainPage.qml" line="22"/>
+        <source>MLPack Learning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MainPage.qml" line="45"/>
+        <source>Q-Learning Maze</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MainPage.qml" line="52"/>
+        <source>CartPole MLPack</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MazePage</name>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="25"/>
+        <source>Q-Learning Maze</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="26"/>
+        <source>Episode: %1 | Reward: %2%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="71"/>
+        <source>Steps: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="76"/>
+        <source>Epsilon: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="86"/>
+        <source>Fast Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="87"/>
+        <source>Train without step-by-step visualization</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="100"/>
+        <source>Stop Training</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="100"/>
+        <source>Start Training</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="112"/>
+        <source>Fast Train 1000</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="118"/>
+        <source>Fast Train 5000</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="124"/>
+        <source>Step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="130"/>
+        <source>Run Episode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="136"/>
+        <source>Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="142"/>
+        <source>New Maze</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="148"/>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="165"/>
+        <source>Speed Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="153"/>
+        <source>Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="174"/>
+        <source>Training Speed (ms delay)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="184"/>
+        <source>Very Fast (1ms)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="190"/>
+        <source>Fast (10ms)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="196"/>
+        <source>Normal (100ms)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="202"/>
+        <source>Slow (500ms)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="209"/>
+        <source>Episodes per UI update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="252"/>
+        <source>Training Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="272"/>
+        <source>Recent Rewards (last 10 episodes):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="287"/>
+        <source>No data yet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="295"/>
+        <source>Average reward: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="305"/>
+        <source>Total episodes: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="318"/>
+        <source>Save Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MazePage.qml" line="327"/>
+        <source>Load Model</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

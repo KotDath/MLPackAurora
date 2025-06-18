@@ -5,6 +5,7 @@
 #include <QtQuick>
 #include <omp.h>
 #include <mlpack.hpp>
+#include "mazecontroller.h"
 
 using namespace mlpack;
 using namespace ens;
@@ -69,7 +70,11 @@ int main(int argc, char *argv[])
     application->setOrganizationName(QStringLiteral("ru.kotdath"));
     application->setApplicationName(QStringLiteral("MLPackAurora"));
 
+    MazeController mazeController;
+
     QScopedPointer<QQuickView> view(Aurora::Application::createView());
+
+    view->rootContext()->setContextProperty("MazeController", &mazeController);
     view->setSource(Aurora::Application::pathTo(QStringLiteral("qml/MLPackAurora.qml")));
     view->show();
 

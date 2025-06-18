@@ -25,3 +25,4 @@ ru.auroraos.qmake_libraries
 *.a*
 *.so*
 git 
+mlpack_demo*/
