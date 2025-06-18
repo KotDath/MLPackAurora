@@ -4,37 +4,37 @@
 <context>
     <name>AboutPage</name>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="58"/>
+        <location filename="../../MLPackAurora/qml/pages/AboutPage.qml" line="23"/>
         <source>About Application</source>
-        <translation>О&#xa0;приложении</translation>
+        <translation>О приложении</translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="68"/>
+        <location filename="../../MLPackAurora/qml/pages/AboutPage.qml" line="33"/>
         <source>#descriptionText</source>
         <translation>&lt;p&gt;Example of usage of mlpack for AuroraOS&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="73"/>
+        <location filename="../../MLPackAurora/qml/pages/AboutPage.qml" line="38"/>
         <source>3-Clause BSD License</source>
-        <translation>Лицензия 3-Clause&#xa0;BSD</translation>
+        <translation>Лицензия 3-Clause BSD</translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="83"/>
+        <location filename="../../MLPackAurora/qml/pages/AboutPage.qml" line="48"/>
         <source>#licenseText</source>
-        <translation>&lt;p&gt;&lt;i&gt;Copyright&#xa0;(C)&#xa0;2022 ru.kotdath&lt;/i&gt;&lt;/p&gt;
+        <translation>&lt;p&gt;&lt;i&gt;Copyright (C) 2022 ru.kotdath&lt;/i&gt;&lt;/p&gt;
 &lt;p&gt;Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:&lt;/p&gt;
 &lt;ol&gt;
-	&lt;li&gt;Redistributions of&#xa0;source code must retain the above copyright notice, this list of&#xa0;conditions and the following disclaimer.&lt;/li&gt;
-	&lt;li&gt;Redistributions in&#xa0;binary form must reproduce the above copyright notice, this list of&#xa0;conditions and the following disclaimer in&#xa0;the documentation and/or other materials provided with the distribution.&lt;/li&gt;
-	&lt;li&gt;Neither the name of&#xa0;the copyright holder nor the names of&#xa0;its contributors may be&#xa0;used to&#xa0;endorse or&#xa0;promote products derived from this software without specific prior written permission.&lt;/li&gt;
+	&lt;li&gt;Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.&lt;/li&gt;
+	&lt;li&gt;Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.&lt;/li&gt;
+	&lt;li&gt;Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;THIS SOFTWARE IS&#xa0;PROVIDED BY&#xa0;THE&#xa0;COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS&#xa0;IS&quot; AND ANY EXPRESS OR&#xa0;IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&#xa0;IMPLIED WARRANTIES OF&#xa0;MERCHANTABILITY AND FITNESS FOR A&#xa0;PARTICULAR PURPOSE ARE DISCLAIMED. IN&#xa0;NO&#xa0;EVENT SHALL THE&#xa0;COPYRIGHT HOLDER OR&#xa0;CONTRIBUTORS BE&#xa0;LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR&#xa0;CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF&#xa0;SUBSTITUTE GOODS OR&#xa0;SERVICES; LOSS OF&#xa0;USE, DATA, OR&#xa0;PROFITS; OR&#xa0;BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON&#xa0;ANY THEORY OF&#xa0;LIABILITY, WHETHER IN&#xa0;CONTRACT, STRICT LIABILITY, OR&#xa0;TORT (INCLUDING NEGLIGENCE OR&#xa0;OTHERWISE) ARISING IN&#xa0;ANY WAY OUT OF&#xa0;THE&#xa0;USE OF&#xa0;THIS SOFTWARE, EVEN IF&#xa0;ADVISED OF&#xa0;THE&#xa0;POSSIBILITY OF&#xa0;SUCH DAMAGE.&lt;/p&gt;</translation>
+&lt;p&gt;THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
     <name>DefaultCoverPage</name>
     <message>
-        <location filename="../qml/cover/DefaultCoverPage.qml" line="47"/>
+        <location filename="../../MLPackAurora/qml/cover/DefaultCoverPage.qml" line="13"/>
         <source>MLPackAurora</source>
         <translation>MLPackAurora</translation>
     </message>
@@ -42,7 +42,7 @@
 <context>
     <name>MainPage</name>
     <message>
-        <location filename="../qml/pages/MainPage.qml" line="48"/>
+        <location filename="../../MLPackAurora/qml/pages/MainPage.qml" line="13"/>
         <source>MLPackAurora</source>
         <translation>MLPackAurora</translation>
     </message>

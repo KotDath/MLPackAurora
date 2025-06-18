@@ -13,6 +13,75 @@ pkg_search_module(AURORA auroraapp_i18n REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(FETCHCONTENT_BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty")
+
+message(${CMAKE_SYSTEM_PROCESSOR})
+
+if(CMAKE_BUILD_TYPE MATCHES Release)
+    set(OPENBLAS_LIB libopenblas.so)
+else()
+    set(OPENBLAS_LIB libopenblas_d.so)
+endif()
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+    message(STATUS "Detected x86_64 architecture")
+    set(TARGET_ARCH GENERIC)
+    set(BINARY 64)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i686")
+    message(STATUS "Detected Linux x86 architecture")
+    set(TARGET_ARCH GENERIC)
+    set(BINARY 32)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armv7l")
+    message(STATUS "Detected Linux arm32 architecture")
+    set(TARGET_ARCH ARMV7)
+    set(BINARY 32)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+    message(STATUS "Detected Linux arm64 architecture")
+    set(TARGET_ARCH ARMV8)
+    set(BINARY 64)
+endif()
+
+#openblas build
+set(openblas_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/openblas)
+set(BUILD_SHARED_LIBS ON CACHE INTERNAL "Build SHARED libraries")
+set(DYNAMIC_ARCH ON CACHE INTERNAL "Dynamic arch")
+set(TARGET ${TARGET_ARCH} CACHE INTERNAL "Architecute")
+set(BINARY ${BINARY} CACHE INTERNAL "64 or 32 bit")
+set(C_LAPACK ON CACHE INTERNAL "Use c impl of lapack")
+add_subdirectory(${openblas_SOURCE_DIR} ${openblas_SOURCE_DIR} EXCLUDE_FROM_ALL)
+include_directories(${openblas_SOURCE_DIR})
+
+#cereal build
+add_library(cereal_interface INTERFACE)
+target_include_directories(cereal_interface INTERFACE thirdparty/cereal/include)
+
+#ensmallen build
+add_library(ensmallen_interface INTERFACE)
+target_include_directories(ensmallen_interface INTERFACE thirdparty/ensmallen/include)
+
+#armadillo build
+
+set(OPENBLAS_PATH thirdparty/openblas/lib)
+configure_file(${CMAKE_SOURCE_DIR}/thirdparty/patches/ARMA_FindOpenBLAS.cmake.in ${CMAKE_SOURCE_DIR}/thirdparty/armadillo/cmake_aux/Modules/ARMA_FindOpenBLAS.cmake)
+set(armadillo_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/armadillo)
+set(BUILD_SHARED_LIBS ON CACHE INTERNAL "Build SHARED libraries")
+set(DETECT_HDF5 OFF CACHE INTERNAL "DETECT_HDF5")
+set(OPENBLAS_PROVIDES_LAPACK ON CACHE INTERNAL "openblas provides lapack")
+set(ARMA_USE_LAPACK ON CACHE INTERNAL "armadillo use lapack")
+set(ARMA_USE_BLAS ON CACHE INTERNAL "armadillo use blas")
+add_subdirectory(${armadillo_SOURCE_DIR} ${armadillo_SOURCE_DIR} EXCLUDE_FROM_ALL)
+include_directories(${armadillo_SOURCE_DIR}/include)
+
+#mlpack build
+add_library(mlpack_interface INTERFACE)
+target_include_directories(mlpack_interface INTERFACE thirdparty/mlpack/src)
+
+
+add_library(OpenBLAS::OpenBLAS SHARED IMPORTED)
+set_target_properties(OpenBLAS::OpenBLAS PROPERTIES
+    IMPORTED_LOCATION "${openblas_SOURCE_DIR}/lib/${OPENBLAS_LIB}"
+    INTERFACE_INCLUDE_DIRECTORIES "${openblas_SOURCE_DIR}"
+    )
 
 set(short_name MLPackAurora)
 
@@ -84,6 +153,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 >)
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt5::Quick
+    OpenBLAS::OpenBLAS
+    cereal_interface
+    ensmallen_interface
+    mlpack_interface
     ${AURORA_LDFLAGS}
 )
 

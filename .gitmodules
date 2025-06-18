@@ -1,0 +1,24 @@
+[submodule "thirdparty/openblas"]
+	path = thirdparty/openblas
+	url = https://github.com/OpenMathLib/OpenBLAS
+	ignore = untracked
+[submodule "thirdparty/cereal"]
+	path = thirdparty/cereal
+	url = https://github.com/USCiLab/cereal
+	ignore = untracked
+[submodule "thirdparty/mlpack"]
+	path = thirdparty/mlpack
+	url = https://github.com/mlpack/mlpack
+	ignore = untracked
+[submodule "thirdparty/armadillo"]
+	path = thirdparty/armadillo
+	url = https://gitlab.com/conradsnicta/armadillo-code
+	ignore = dirty
+[submodule "thirdparty/ensmallen"]
+	path = thirdparty/ensmallen
+	url = https://github.com/mlpack/ensmallen
+	ignore = untracked
+[submodule "thirdparty/superlu"]
+	path = thirdparty/superlu
+	url = https://github.com/xiaoyeli/superlu
+	ignore = untracked

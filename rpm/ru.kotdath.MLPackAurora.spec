@@ -1,3 +1,6 @@
+%define __provides_exclude_from ^%{_datadir}/%{name}/lib/.*$
+%define __requires_exclude ^(libopenblas.*|libopenblas_d.*).*$
+
 Name:       ru.kotdath.MLPackAurora
 Summary:    Example of usage of mlpack for AuroraOS
 Version:    0.1
@@ -16,13 +19,23 @@ BuildRequires:  pkgconfig(Qt5Quick)
 Example of usage of mlpack for AuroraOS
 
 %prep
+
 %autosetup
 
 %build
+
 %cmake -GNinja
 %ninja_build
 
 %install
+
+mkdir -p %{buildroot}/%{_datadir}/%{name}/lib/
+cp %{_sourcedir}/../thirdparty/openblas/lib/*.so* %{buildroot}/%{_datadir}/%{name}/lib/
+chmod 600 %{buildroot}/%{_datadir}/%{name}/lib/*.so*
+
+echo "amo"
+echo %{buildroot}/%{_infodir}
+
 %ninja_install
 
 %files
