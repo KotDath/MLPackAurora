@@ -1,7 +1,13 @@
 #ifndef QLEARNINGAGENT_H
 #define QLEARNINGAGENT_H
 
-#include <mlpack.hpp>
+#include <mlpack/methods/reinforcement_learning/q_learning.hpp>
+#include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
+#include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
+#include <mlpack/methods/reinforcement_learning/training_config.hpp>
+#include <mlpack/core/data/save.hpp>
+#include <mlpack/core/data/load.hpp>
+#include <ensmallen.hpp>
 #include <armadillo>
 #include <random>
 #include <QtCore>

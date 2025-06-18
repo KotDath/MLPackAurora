@@ -40,6 +40,79 @@
     </message>
 </context>
 <context>
+    <name>MLPackCartPolePage</name>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="22"/>
+        <source>CartPole MLPack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="260"/>
+        <source>Episode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="271"/>
+        <source>Step:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="282"/>
+        <source>Total Reward:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="293"/>
+        <source>Cart Position:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="304"/>
+        <source>Pole Angle:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="323"/>
+        <source>Training</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="331"/>
+        <source>Start Training</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="338"/>
+        <source>Stop Training</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="347"/>
+        <source>Simulation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="355"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="355"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="369"/>
+        <source>Next Episode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../MLPackAurora/qml/pages/MLPackCartPolePage.qml" line="381"/>
+        <source>Reset</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainPage</name>
     <message>
         <source>MLPackAurora</source>

@@ -53,20 +53,22 @@ foreach(_ts_file ${TS_FILES})
 endforeach()
 file(GLOB GEN_TS_FILES "${GEN_TS_PATH}/*.ts")
 
-add_custom_target(update_translations)
-foreach(_ts_file ${GEN_TS_FILES})
-    get_filename_component(_ts_name ${_ts_file} NAME_WE)
-    add_custom_command(
-        OUTPUT ${_ts_file}
-        DEPENDS ${TRANSLATION_SOURCES_FILES}
-        COMMAND ${Qt5_LUPDATE_EXECUTABLE}
-        ARGS ${TRANSLATION_SOURCES_FILES} -ts ${_ts_file}
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ARGS ${_ts_file} ${CMAKE_CURRENT_SOURCE_DIR}/translations
-    )
-    add_custom_target(translate_${_ts_name} DEPENDS ${_ts_file})
-    add_dependencies(update_translations translate_${_ts_name})
-endforeach()
+# add_custom_target(update_translations)
+# foreach(_ts_file ${GEN_TS_FILES})
+#     get_filename_component(_ts_name ${_ts_file} NAME_WE)
+#     add_custom_command(
+#         OUTPUT ${_ts_file}
+#         DEPENDS ${TRANSLATION_SOURCES_FILES}
+#         COMMAND ${Qt5_LUPDATE_EXECUTABLE}
+#         ARGS ${TRANSLATION_SOURCES_FILES} -ts ${_ts_file}
+#         COMMAND ${CMAKE_COMMAND} -E copy
+#         ARGS ${_ts_file} ${CMAKE_CURRENT_SOURCE_DIR}/translations
+#     )
+#     add_custom_target(translate_${_ts_name} DEPENDS ${_ts_file})
+#     add_dependencies(update_translations translate_${_ts_name})
+# endforeach()
+
+
 
 qt5_add_translation(TRANSLATION_QM_FILES ${GEN_TS_FILES})
 
