@@ -5,8 +5,8 @@
 #include <QCoreApplication>
 #include <cmath>
 
-// CartPoleTrainer implementation
-CartPoleTrainer::CartPoleTrainer(QObject *parent)
+// CartPoleV1Trainer implementation
+CartPoleV1Trainer::CartPoleV1Trainer(QObject *parent)
     : QObject(parent)
     , m_shouldStop(false)
 {
@@ -20,24 +20,24 @@ CartPoleTrainer::CartPoleTrainer(QObject *parent)
     m_network.Add<Linear>(2);
 }
 
-void CartPoleTrainer::startTraining()
+void CartPoleV1Trainer::startTraining()
 {
     m_shouldStop = false;
     
     try {
         SimpleDQN<> model(m_network);
-        GreedyPolicy<CartPole> policy(1.0, 1000, 0.1, 0.99);
-        RandomReplay<CartPole> replayMethod(10, 10000);
+        GreedyPolicy<CartPoleV1> policy(1.0, 1000, 0.1, 0.99);
+        RandomReplay<CartPoleV1> replayMethod(10, 10000);
 
         TrainingConfig config;
-        config.StepSize() = 0.01;
-        config.Discount() = 0.9;
+        config.StepSize() = 1e-3;
+        config.Discount() = 0.99;
         config.TargetNetworkSyncInterval() = 100;
-        config.ExplorationSteps() = 100;
-        config.DoubleQLearning() = false;
+        config.ExplorationSteps() = 300;
+        config.DoubleQLearning() = true;
         config.StepLimit() = 200;
 
-        QLearning<CartPole, decltype(model), AdamUpdate, decltype(policy)>
+        QLearning<CartPoleV1, decltype(model), AdamUpdate, decltype(policy)>
             agent(config, model, policy, replayMethod);
 
         arma::running_stat<double> averageReturn;
@@ -69,7 +69,7 @@ void CartPoleTrainer::startTraining()
             // Save the trained network
             QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
             QDir().mkpath(dataDir);
-            QString modelPath = dataDir + "/simple_dqn_cartpole.bin";
+            QString modelPath = dataDir + "/simple_dqn_CartPoleV1.bin";
             qDebug() << "model path: " << modelPath;
             
             try {
@@ -87,13 +87,13 @@ void CartPoleTrainer::startTraining()
     }
 }
 
-void CartPoleTrainer::stopTraining()
+void CartPoleV1Trainer::stopTraining()
 {
     m_shouldStop = true;
 }
 
-// CartPoleController implementation
-CartPoleController::CartPoleController(QObject *parent)
+// CartPoleV1Controller implementation
+CartPoleV1Controller::CartPoleV1Controller(QObject *parent)
     : QObject(parent)
     , m_isTraining(false)
     , m_trainingThread(nullptr)
@@ -106,7 +106,7 @@ CartPoleController::CartPoleController(QObject *parent)
     , m_cartPosition(0.0)
     , m_poleAngle(0.0)
     , m_status("Ready")
-    , m_environment(new CartPole())
+    , m_environment(new CartPoleV1())
     , m_episodeActive(false)
 {
     // Initialize network
@@ -120,13 +120,13 @@ CartPoleController::CartPoleController(QObject *parent)
     // Setup simulation timer
     m_simulationTimer = new QTimer(this);
     m_simulationTimer->setInterval(50); // 20 FPS
-    connect(m_simulationTimer, &QTimer::timeout, this, &CartPoleController::updateSimulation);
+    connect(m_simulationTimer, &QTimer::timeout, this, &CartPoleV1Controller::updateSimulation);
 
     // Initialize simulation state
     resetSimulationState();
 }
 
-CartPoleController::~CartPoleController()
+CartPoleV1Controller::~CartPoleV1Controller()
 {
     if (m_trainingThread) {
         if (m_trainer) {
@@ -138,7 +138,7 @@ CartPoleController::~CartPoleController()
     }
 }
 
-void CartPoleController::startTraining()
+void CartPoleV1Controller::startTraining()
 {
     if (m_isTraining) return;
 
@@ -148,19 +148,19 @@ void CartPoleController::startTraining()
 
     // Create training thread
     m_trainingThread = new QThread(this);
-    m_trainer = new CartPoleTrainer();
+    m_trainer = new CartPoleV1Trainer();
     m_trainer->moveToThread(m_trainingThread);
 
     // Connect signals
-    connect(m_trainingThread, &QThread::started, m_trainer, &CartPoleTrainer::startTraining);
-    connect(m_trainer, &CartPoleTrainer::trainingProgress, this, &CartPoleController::onTrainingProgress);
-    connect(m_trainer, &CartPoleTrainer::trainingCompleted, this, &CartPoleController::onTrainingCompleted);
-    connect(m_trainer, &CartPoleTrainer::trainingError, this, &CartPoleController::onTrainingError);
+    connect(m_trainingThread, &QThread::started, m_trainer, &CartPoleV1Trainer::startTraining);
+    connect(m_trainer, &CartPoleV1Trainer::trainingProgress, this, &CartPoleV1Controller::onTrainingProgress);
+    connect(m_trainer, &CartPoleV1Trainer::trainingCompleted, this, &CartPoleV1Controller::onTrainingCompleted);
+    connect(m_trainer, &CartPoleV1Trainer::trainingError, this, &CartPoleV1Controller::onTrainingError);
 
     m_trainingThread->start();
 }
 
-void CartPoleController::stopTraining()
+void CartPoleV1Controller::stopTraining()
 {
     if (!m_isTraining) return;
 
@@ -171,7 +171,7 @@ void CartPoleController::stopTraining()
     setStatus("Stopping training...");
 }
 
-void CartPoleController::startSimulation()
+void CartPoleV1Controller::startSimulation()
 {
     if (m_isRunning) return;
 
@@ -181,7 +181,7 @@ void CartPoleController::startSimulation()
     m_simulationTimer->start();
 }
 
-void CartPoleController::stopSimulation()
+void CartPoleV1Controller::stopSimulation()
 {
     if (!m_isRunning) return;
 
@@ -190,7 +190,7 @@ void CartPoleController::stopSimulation()
     m_simulationTimer->stop();
 }
 
-void CartPoleController::nextEpisode()
+void CartPoleV1Controller::nextEpisode()
 {
     if (m_isRunning) return;
 
@@ -199,7 +199,7 @@ void CartPoleController::nextEpisode()
     setStatus("Ready for next episode");
 }
 
-void CartPoleController::resetSimulation()
+void CartPoleV1Controller::resetSimulation()
 {
     stopSimulation();
     setCurrentEpisode(1);
@@ -207,7 +207,7 @@ void CartPoleController::resetSimulation()
     setStatus("Simulation reset");
 }
 
-void CartPoleController::onTrainingProgress(int episode, double averageReturn, double episodeReturn, double epsilon)
+void CartPoleV1Controller::onTrainingProgress(int episode, double averageReturn, double episodeReturn, double epsilon)
 {
     setTrainingProgress(static_cast<double>(episode) / 2000.0 * 100.0);
     setStatus(QString("Training: Episode %1, Avg Return: %2")
@@ -215,7 +215,7 @@ void CartPoleController::onTrainingProgress(int episode, double averageReturn, d
               .arg(averageReturn, 0, 'f', 2));
 }
 
-void CartPoleController::onTrainingCompleted(bool converged, int totalEpisodes, double finalAverageReturn)
+void CartPoleV1Controller::onTrainingCompleted(bool converged, int totalEpisodes, double finalAverageReturn)
 {
     setIsTraining(false);
     setTrainingProgress(100.0);
@@ -246,7 +246,7 @@ void CartPoleController::onTrainingCompleted(bool converged, int totalEpisodes, 
     }
 }
 
-void CartPoleController::onTrainingError(const QString& error)
+void CartPoleV1Controller::onTrainingError(const QString& error)
 {
     setIsTraining(false);
     setStatus(QString("Training error: %1").arg(error));
@@ -262,7 +262,7 @@ void CartPoleController::onTrainingError(const QString& error)
     }
 }
 
-void CartPoleController::updateSimulation()
+void CartPoleV1Controller::updateSimulation()
 {
     if (!m_isRunning || !m_episodeActive) return;
 
@@ -279,7 +279,7 @@ void CartPoleController::updateSimulation()
     takeSimulationStep();
 }
 
-void CartPoleController::resetSimulationState()
+void CartPoleV1Controller::resetSimulationState()
 {
     m_currentState = m_environment->InitialSample();
     setCurrentStep(0);
@@ -289,9 +289,9 @@ void CartPoleController::resetSimulationState()
     m_episodeActive = true;
 }
 
-void CartPoleController::takeSimulationStep()
+void CartPoleV1Controller::takeSimulationStep()
 {
-    CartPole::Action action;
+    CartPoleV1::Action action;
     
     if (m_trainingProgress >= 100.0) {
         // Use trained network
@@ -307,14 +307,14 @@ void CartPoleController::takeSimulationStep()
         // Choose action with highest Q-value
         arma::uword bestAction;
         qValues.max(bestAction);
-        action.action = static_cast<CartPole::Action::actions>(bestAction);
+        action.action = static_cast<CartPoleV1::Action::actions>(bestAction);
     } else {
         // Random actions
-        action.action = (qrand() % 2 == 0) ? CartPole::Action::backward : CartPole::Action::forward;
+        action.action = (qrand() % 2 == 0) ? CartPoleV1::Action::backward : CartPoleV1::Action::forward;
     }
 
     // Take action
-    CartPole::State nextState;
+    CartPoleV1::State nextState;
     double reward = m_environment->Sample(m_currentState, action, nextState);
     m_currentState = nextState;
     
@@ -325,7 +325,7 @@ void CartPoleController::takeSimulationStep()
 }
 
 // Property setters
-void CartPoleController::setIsTraining(bool value)
+void CartPoleV1Controller::setIsTraining(bool value)
 {
     if (m_isTraining != value) {
         m_isTraining = value;
@@ -333,7 +333,7 @@ void CartPoleController::setIsTraining(bool value)
     }
 }
 
-void CartPoleController::setIsRunning(bool value)
+void CartPoleV1Controller::setIsRunning(bool value)
 {
     if (m_isRunning != value) {
         m_isRunning = value;
@@ -341,7 +341,7 @@ void CartPoleController::setIsRunning(bool value)
     }
 }
 
-void CartPoleController::setCurrentEpisode(int value)
+void CartPoleV1Controller::setCurrentEpisode(int value)
 {
     if (m_currentEpisode != value) {
         m_currentEpisode = value;
@@ -349,7 +349,7 @@ void CartPoleController::setCurrentEpisode(int value)
     }
 }
 
-void CartPoleController::setCurrentStep(int value)
+void CartPoleV1Controller::setCurrentStep(int value)
 {
     if (m_currentStep != value) {
         m_currentStep = value;
@@ -357,7 +357,7 @@ void CartPoleController::setCurrentStep(int value)
     }
 }
 
-void CartPoleController::setTotalReward(double value)
+void CartPoleV1Controller::setTotalReward(double value)
 {
     if (qAbs(m_totalReward - value) > 0.01) {
         m_totalReward = value;
@@ -365,7 +365,7 @@ void CartPoleController::setTotalReward(double value)
     }
 }
 
-void CartPoleController::setCartPosition(double value)
+void CartPoleV1Controller::setCartPosition(double value)
 {
     if (qAbs(m_cartPosition - value) > 0.001) {
         m_cartPosition = value;
@@ -373,7 +373,7 @@ void CartPoleController::setCartPosition(double value)
     }
 }
 
-void CartPoleController::setPoleAngle(double value)
+void CartPoleV1Controller::setPoleAngle(double value)
 {
     if (qAbs(m_poleAngle - value) > 0.001) {
         m_poleAngle = value;
@@ -381,7 +381,7 @@ void CartPoleController::setPoleAngle(double value)
     }
 }
 
-void CartPoleController::setStatus(const QString& value)
+void CartPoleV1Controller::setStatus(const QString& value)
 {
     if (m_status != value) {
         m_status = value;
@@ -389,7 +389,7 @@ void CartPoleController::setStatus(const QString& value)
     }
 }
 
-void CartPoleController::setTrainingProgress(double value)
+void CartPoleV1Controller::setTrainingProgress(double value)
 {
     if (qAbs(m_trainingProgress - value) > 0.1) {
         m_trainingProgress = value;

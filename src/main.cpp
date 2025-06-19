@@ -17,13 +17,13 @@ int main(int argc, char *argv[])
 
     // Create controllers
     MazeController mazeController;
-    CartPoleController cartPoleController;
+    CartPoleV1Controller cartPoleV1Controller;
 
     QScopedPointer<QQuickView> view(Aurora::Application::createView());
 
     // Register controllers with QML
     view->rootContext()->setContextProperty("MazeController", &mazeController);
-    view->rootContext()->setContextProperty("CartPoleController", &cartPoleController);
+    view->rootContext()->setContextProperty("CartPoleController", &cartPoleV1Controller);
     
     view->setSource(Aurora::Application::pathTo(QStringLiteral("qml/MLPackAurora.qml")));
     view->show();

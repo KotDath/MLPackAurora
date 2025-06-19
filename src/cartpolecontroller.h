@@ -8,26 +8,18 @@
 #include <QScopedPointer>
 #include <QPointF>
 #include <QList>
-#include <mlpack/methods/ann/ffn.hpp>
-#include <mlpack/methods/ann/init_rules/gaussian_init.hpp>
-#include <mlpack/methods/ann/loss_functions/mean_squared_error.hpp>
-#include <mlpack/methods/reinforcement_learning/environment/cart_pole.hpp>
-#include <mlpack/methods/reinforcement_learning/policy/greedy_policy.hpp>
-#include <mlpack/methods/reinforcement_learning/replay/random_replay.hpp>
-#include <mlpack/methods/reinforcement_learning/training_config.hpp>
-#include <mlpack/methods/reinforcement_learning/q_learning.hpp>
-#include <mlpack/methods/reinforcement_learning/q_networks/simple_dqn.hpp>
-#include <ensmallen.hpp>
+#include <mlpack.hpp>
+#include "CartPoleV1.h"
 
 using namespace mlpack;
 using namespace ens;
 
-class CartPoleTrainer : public QObject
+class CartPoleV1Trainer : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit CartPoleTrainer(QObject *parent = nullptr);
+    explicit CartPoleV1Trainer(QObject *parent = nullptr);
     const FFN<MeanSquaredError, GaussianInitialization>& network() const { return m_network; }
 
 public slots:
@@ -44,7 +36,7 @@ private:
     bool m_shouldStop;
 };
 
-class CartPoleController : public QObject
+class CartPoleV1Controller : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool isTraining READ isTraining NOTIFY isTrainingChanged)
@@ -58,8 +50,8 @@ class CartPoleController : public QObject
     Q_PROPERTY(double trainingProgress READ trainingProgress NOTIFY trainingProgressChanged)
 
 public:
-    explicit CartPoleController(QObject *parent = nullptr);
-    ~CartPoleController();
+    explicit CartPoleV1Controller(QObject *parent = nullptr);
+    ~CartPoleV1Controller();
 
     // Property getters
     bool isTraining() const { return m_isTraining; }
@@ -114,7 +106,7 @@ private:
     // Training
     bool m_isTraining;
     QThread* m_trainingThread;
-    CartPoleTrainer* m_trainer;
+    CartPoleV1Trainer* m_trainer;
     double m_trainingProgress;
 
     // Simulation
@@ -129,8 +121,8 @@ private:
 
     // MLPack objects
     FFN<MeanSquaredError, GaussianInitialization> m_network;
-    QScopedPointer<CartPole> m_environment;
-    CartPole::State m_currentState;
+    QScopedPointer<CartPoleV1> m_environment;
+    CartPoleV1::State m_currentState;
     bool m_episodeActive;
 
     // Thread safety
