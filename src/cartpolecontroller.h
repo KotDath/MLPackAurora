@@ -19,7 +19,9 @@ class CartPoleV1Trainer : public QObject
     Q_OBJECT
 
 public:
-    explicit CartPoleV1Trainer(QObject *parent = nullptr);
+    explicit CartPoleV1Trainer(QObject *parent = nullptr, int targetAverageReturn = 70);
+    void setTargetAverageReturn(int value) { m_targetAverageReturn = value; }
+    int targetAverageReturn() const { return m_targetAverageReturn; }
     const FFN<MeanSquaredError, GaussianInitialization>& network() const { return m_network; }
 
 public slots:
@@ -34,6 +36,7 @@ signals:
 private:
     FFN<MeanSquaredError, GaussianInitialization> m_network;
     bool m_shouldStop;
+    int m_targetAverageReturn = 70;
 };
 
 class CartPoleV1Controller : public QObject
@@ -48,6 +51,7 @@ class CartPoleV1Controller : public QObject
     Q_PROPERTY(double poleAngle READ poleAngle NOTIFY poleAngleChanged)
     Q_PROPERTY(QString status READ status NOTIFY statusChanged)
     Q_PROPERTY(double trainingProgress READ trainingProgress NOTIFY trainingProgressChanged)
+    Q_PROPERTY(int targetAverageReturn READ targetAverageReturn WRITE setTargetAverageReturn NOTIFY targetAverageReturnChanged)
 
 public:
     explicit CartPoleV1Controller(QObject *parent = nullptr);
@@ -63,6 +67,7 @@ public:
     double poleAngle() const { return m_poleAngle; }
     QString status() const { return m_status; }
     double trainingProgress() const { return m_trainingProgress; }
+    int targetAverageReturn() const { return m_targetAverageReturn; }
 
 public slots:
     void startTraining();
@@ -71,6 +76,7 @@ public slots:
     void stopSimulation();
     void nextEpisode();
     void resetSimulation();
+    void setTargetAverageReturn(int value);
 
 signals:
     void isTrainingChanged();
@@ -82,6 +88,7 @@ signals:
     void poleAngleChanged();
     void statusChanged();
     void trainingProgressChanged();
+    void targetAverageReturnChanged();
 
 private slots:
     void onTrainingProgress(int episode, double averageReturn, double episodeReturn, double epsilon);
@@ -127,6 +134,8 @@ private:
 
     // Thread safety
     QMutex m_mutex;
+
+    int m_targetAverageReturn = 70;
 };
 
 #endif // CARTPOLECONTROLLER_H 

@@ -341,6 +341,35 @@ Page {
                     }
                 }
 
+                // Slider for target average return
+                Row {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: Theme.paddingMedium
+                    width: parent.width
+                    Label {
+                        text: qsTr("Target Avg Return:")
+                        font.pixelSize: Theme.fontSizeSmall
+                    }
+                    Slider {
+                        id: targetReturnSlider
+                        minimumValue: 10.0
+                        maximumValue: 110.0
+                        stepSize: 1
+                        value: CartPoleController.targetAverageReturn
+                        onValueChanged: CartPoleController.targetAverageReturn = Math.round(value)
+                        enabled: !CartPoleController.isTraining
+                        width: parent.width
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                    }
+                    Label {
+                        text: CartPoleController.targetAverageReturn
+                        font.pixelSize: Theme.fontSizeSmall
+                        width: 32
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                }
+
                 // Simulation controls
                 SectionHeader {
                     text: qsTr("Simulation")

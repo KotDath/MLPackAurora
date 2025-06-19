@@ -6,9 +6,10 @@
 #include <cmath>
 
 // CartPoleV1Trainer implementation
-CartPoleV1Trainer::CartPoleV1Trainer(QObject *parent)
+CartPoleV1Trainer::CartPoleV1Trainer(QObject *parent, int targetAverageReturn)
     : QObject(parent)
     , m_shouldStop(false)
+    , m_targetAverageReturn(targetAverageReturn)
 {
     // Initialize network architecture (same as in demo)
     m_network = FFN<MeanSquaredError, GaussianInitialization>(MeanSquaredError(),
@@ -53,7 +54,7 @@ void CartPoleV1Trainer::startTraining()
             emit trainingProgress(episodes, averageReturn.mean(), episodeReturn, policy.Epsilon());
 
             // Check convergence
-            if (averageReturn.mean() > 70 && episodes >= 50) {
+            if (averageReturn.mean() > m_targetAverageReturn && episodes >= 10) {
                 converged = true;
                 break;
             }
@@ -108,6 +109,7 @@ CartPoleV1Controller::CartPoleV1Controller(QObject *parent)
     , m_status("Ready")
     , m_environment(new CartPoleV1())
     , m_episodeActive(false)
+    , m_targetAverageReturn(70)
 {
     // Initialize network
     m_network = FFN<MeanSquaredError, GaussianInitialization>(MeanSquaredError(),
@@ -148,7 +150,7 @@ void CartPoleV1Controller::startTraining()
 
     // Create training thread
     m_trainingThread = new QThread(this);
-    m_trainer = new CartPoleV1Trainer();
+    m_trainer = new CartPoleV1Trainer(nullptr, m_targetAverageReturn);
     m_trainer->moveToThread(m_trainingThread);
 
     // Connect signals
@@ -394,5 +396,13 @@ void CartPoleV1Controller::setTrainingProgress(double value)
     if (qAbs(m_trainingProgress - value) > 0.1) {
         m_trainingProgress = value;
         emit trainingProgressChanged();
+    }
+}
+
+void CartPoleV1Controller::setTargetAverageReturn(int value)
+{
+    if (m_targetAverageReturn != value) {
+        m_targetAverageReturn = value;
+        emit targetAverageReturnChanged();
     }
 }
