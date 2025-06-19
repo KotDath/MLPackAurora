@@ -2,10 +2,14 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <chrono>
+#include <QFile>
+#include <QTextStream>
+#include <QDir>
+#include <QStandardPaths>
 
 MazeController::MazeController(QObject *parent)
     : QObject(parent), isTraining(false), currentEpisode(0), totalEpisodes(0),
-      episodeReward(0.0), stepCount(0), trainingDelay(100), fastMode(false), episodesPerUpdate(10) {
+      episodeReward(0.0), stepCount(0), trainingDelay(100), fastMode(false), episodesPerUpdate(10), movingAverageReward(0.0) {
     
     // Создаем среду и агента
     environment = new MazeEnvironment();
@@ -20,6 +24,21 @@ MazeController::MazeController(QObject *parent)
     fastTrainingTimer = new QTimer(this);
     fastTrainingTimer->setSingleShot(false);
     connect(fastTrainingTimer, &QTimer::timeout, this, &MazeController::fastTrainStep);
+    
+    // Создаем директорию Documents если её нет
+    QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QDir documentsDir(documentsPath);
+    if (!documentsDir.exists()) {
+        documentsDir.mkpath(".");
+    }
+    
+    // Инициализируем файл логирования
+    QFile logFile(documentsPath + "/maze.txt");
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&logFile);
+        out << "Episode,Reward,Steps,Epsilon,MovingAverageReward,Timestamp\n";
+        logFile.close();
+    }
     
     qDebug() << "MazeController initialized";
 }
@@ -60,6 +79,10 @@ bool MazeController::getFastMode() const {
     return fastMode;
 }
 
+double MazeController::getMovingAverageReward() const {
+    return movingAverageReward;
+}
+
 void MazeController::setFastMode(bool enabled) {
     if (fastMode != enabled) {
         fastMode = enabled;
@@ -81,6 +104,18 @@ void MazeController::startTraining(int episodes) {
     isTraining = true;
     
     rewardHistory.clear();
+    
+    // Очищаем данные для скользящего среднего
+    recentRewards.clear();
+    movingAverageReward = 0.0;
+    
+    // Очищаем файл логирования и записываем заголовок
+    QFile logFile(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/maze.txt");
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&logFile);
+        out << "Episode,Reward,Steps,Epsilon,MovingAverageReward,Timestamp\n";
+        logFile.close();
+    }
     
     // Сбрасываем среду для нового эпизода
     environment->reset();
@@ -195,6 +230,14 @@ void MazeController::fastTrain(int episodes) {
     }
     
     qDebug() << "Starting fast training for" << episodes << "episodes...";
+    
+    // Очищаем файл логирования и записываем заголовок
+    QFile logFile(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/maze.txt");
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&logFile);
+        out << "Episode,Reward,Steps,Epsilon,MovingAverageReward,Timestamp\n";
+        logFile.close();
+    }
     
     auto startTime = std::chrono::high_resolution_clock::now();
     
@@ -314,6 +357,37 @@ void MazeController::runSingleEpisode() {
     // Добавляем награду эпизода в историю
     rewardHistory.append(currentEpisodeReward);
     
+    // Обновляем скользящее среднее последних 100 эпизодов
+    recentRewards.append(currentEpisodeReward);
+    if (recentRewards.size() > movingAverageWindow) {
+        recentRewards.removeFirst();
+    }
+    
+    // Вычисляем скользящее среднее
+    double sum = 0.0;
+    for (double reward : recentRewards) {
+        sum += reward;
+    }
+    double newMovingAverage = sum / recentRewards.size();
+    
+    if (qAbs(movingAverageReward - newMovingAverage) > 0.001) {
+        movingAverageReward = newMovingAverage;
+        emit movingAverageRewardChanged();
+    }
+    
+    // Логируем в файл
+    QFile logFile(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/maze.txt");
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+        QTextStream out(&logFile);
+        out << currentEpisode << "," 
+            << QString::number(currentEpisodeReward, 'f', 6) << "," 
+            << currentStepCount << "," 
+            << QString::number(agent->getEpsilon(), 'f', 6) << ","
+            << QString::number(movingAverageReward, 'f', 6) << ","
+            << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") << "\n";
+        logFile.close();
+    }
+
     // Уменьшаем epsilon
     agent->decayEpsilon();
     
@@ -326,6 +400,37 @@ void MazeController::finishEpisode() {
     // Добавляем награду эпизода в историю
     rewardHistory.append(episodeReward);
     
+    // Обновляем скользящее среднее последних 100 эпизодов
+    recentRewards.append(episodeReward);
+    if (recentRewards.size() > movingAverageWindow) {
+        recentRewards.removeFirst();
+    }
+    
+    // Вычисляем скользящее среднее
+    double sum = 0.0;
+    for (double reward : recentRewards) {
+        sum += reward;
+    }
+    double newMovingAverage = sum / recentRewards.size();
+    
+    if (qAbs(movingAverageReward - newMovingAverage) > 0.001) {
+        movingAverageReward = newMovingAverage;
+        emit movingAverageRewardChanged();
+    }
+    
+    // Логируем в файл
+    QFile logFile(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/maze.txt");
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+        QTextStream out(&logFile);
+        out << currentEpisode << "," 
+            << QString::number(episodeReward, 'f', 6) << "," 
+            << stepCount << "," 
+            << QString::number(agent->getEpsilon(), 'f', 6) << ","
+            << QString::number(movingAverageReward, 'f', 6) << ","
+            << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") << "\n";
+        logFile.close();
+    }
+
     // Уменьшаем epsilon (исследование -> эксплуатация)
     agent->decayEpsilon();
     
@@ -334,15 +439,8 @@ void MazeController::finishEpisode() {
     
     // Выводим статистику каждые 100 эпизодов
     if (currentEpisode % 100 == 0) {
-        double avgReward = 0.0;
-        int recentEpisodes = std::min(100, rewardHistory.size());
-        for (int i = rewardHistory.size() - recentEpisodes; i < rewardHistory.size(); i++) {
-            avgReward += rewardHistory[i];
-        }
-        avgReward /= recentEpisodes;
-        
-        qDebug() << "Episode" << currentEpisode << "- Average reward (last" << recentEpisodes << "):" << avgReward 
-                 << "Epsilon:" << agent->getEpsilon() << "Steps:" << stepCount;
+        qDebug() << "Episode" << currentEpisode << "- Moving average reward:" << movingAverageReward
+                 << "Episode reward:" << episodeReward << "Epsilon:" << agent->getEpsilon() << "Steps:" << stepCount;
     }
 }
 

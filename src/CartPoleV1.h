@@ -104,7 +104,7 @@ class CartPoleV1
            const double massPole = 0.1,
            const double length = 0.5,
            const double forceMag = 10.0,
-           const double tau = 0.02,
+           const double tau = 0.016,
            const double thetaThresholdRadians = 12 * 2 * 3.1416 / 360,
            const double xThreshold = 2.4,
            const double doneReward = 1.0) :

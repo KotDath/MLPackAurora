@@ -7,7 +7,7 @@ Name=MLPackAurora
 Name[ru]=MLPackAurora
 
 [X-Application]
-Permissions=
+Permissions=UserDirs
 OrganizationName=ru.kotdath
 ApplicationName=MLPackAurora
 ExecDBus=/usr/bin/ru.kotdath.MLPackAurora

@@ -341,32 +341,42 @@ Page {
                     }
                 }
 
-                // Slider for target average return
-                Row {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: Theme.paddingMedium
+                // Target Average Return Slider
+                Column {
                     width: parent.width
-                    Label {
-                        text: qsTr("Target Avg Return:")
-                        font.pixelSize: Theme.fontSizeSmall
+                    spacing: Theme.paddingSmall
+
+                    Row {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: Theme.paddingMedium
+
+                        Label {
+                            text: qsTr("Target Avg Return:")
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: Theme.fontSizeSmall
+                            color: Theme.primaryColor
+                        }
+
+                        Label {
+                            id: targetLabel
+                            text: CartPoleController.targetAverageReturn
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: Theme.fontSizeSmall
+                            color: Theme.highlightColor
+                            width: Theme.itemSizeSmall
+                        }
                     }
+
                     Slider {
-                        id: targetReturnSlider
+                        id: targetSlider
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width * 0.9
                         minimumValue: 10.0
-                        maximumValue: 110.0
+                        maximumValue: 500.0
                         stepSize: 1
                         value: CartPoleController.targetAverageReturn
                         onValueChanged: CartPoleController.targetAverageReturn = Math.round(value)
                         enabled: !CartPoleController.isTraining
-                        width: parent.width
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                    }
-                    Label {
-                        text: CartPoleController.targetAverageReturn
-                        font.pixelSize: Theme.fontSizeSmall
-                        width: 32
-                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
 

@@ -4,6 +4,9 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <cmath>
+#include <QFile>
+#include <QTextStream>
+#include <QDateTime>
 
 // CartPoleV1Trainer implementation
 CartPoleV1Trainer::CartPoleV1Trainer(QObject *parent, int targetAverageReturn)
@@ -41,20 +44,39 @@ void CartPoleV1Trainer::startTraining()
         QLearning<CartPoleV1, decltype(model), AdamUpdate, decltype(policy)>
             agent(config, model, policy, replayMethod);
 
-        arma::running_stat<double> averageReturn;
+        // Используем вектор для хранения последних 100 эпизодов
+        std::vector<double> recentReturns;
+        const size_t windowSize = 100;
+        double movingAverage = 0.0;
+        
         size_t episodes = 0;
         bool converged = false;
         
         while (!m_shouldStop && episodes < 2000) {
             double episodeReturn = agent.Episode();
-            averageReturn(episodeReturn);
+            
+            // Добавляем новый результат в окно
+            recentReturns.push_back(episodeReturn);
+            
+            // Если превысили размер окна, удаляем старый элемент
+            if (recentReturns.size() > windowSize) {
+                recentReturns.erase(recentReturns.begin());
+            }
+            
+            // Вычисляем скользящее среднее
+            double sum = 0.0;
+            for (double value : recentReturns) {
+                sum += value;
+            }
+            movingAverage = sum / recentReturns.size();
+            
             episodes++;
 
             // Emit progress signal
-            emit trainingProgress(episodes, averageReturn.mean(), episodeReturn, policy.Epsilon());
+            emit trainingProgress(episodes, movingAverage, episodeReturn, policy.Epsilon());
 
-            // Check convergence
-            if (averageReturn.mean() > m_targetAverageReturn && episodes >= 10) {
+            // Check convergence - требуем минимум 50 эпизодов для стабильной оценки
+            if (movingAverage > m_targetAverageReturn && episodes >= 50) {
                 converged = true;
                 break;
             }
@@ -75,7 +97,7 @@ void CartPoleV1Trainer::startTraining()
             
             try {
                 //mlpack::data::Save(modelPath.toStdString(), "agent", m_network, false);
-                emit trainingCompleted(converged, episodes, averageReturn.mean());
+                emit trainingCompleted(converged, episodes, movingAverage);
             } catch (const std::exception& e) {
                 emit trainingError(QString("Failed to save model: %1").arg(e.what()));
             }
@@ -121,11 +143,26 @@ CartPoleV1Controller::CartPoleV1Controller(QObject *parent)
     m_network.Add<Linear>(2);
     // Setup simulation timer
     m_simulationTimer = new QTimer(this);
-    m_simulationTimer->setInterval(50); // 20 FPS
+    m_simulationTimer->setInterval(33);
     connect(m_simulationTimer, &QTimer::timeout, this, &CartPoleV1Controller::updateSimulation);
 
     // Initialize simulation state
     resetSimulationState();
+    
+    // Создаем директорию Documents если её нет
+    QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QDir documentsDir(documentsPath);
+    if (!documentsDir.exists()) {
+        documentsDir.mkpath(".");
+    }
+    
+    // Инициализируем файл логирования
+    QFile logFile(documentsPath + "/cartpole.txt");
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&logFile);
+        out << "Episode,AverageReturn,EpisodeReturn,Epsilon,Timestamp\n";
+        logFile.close();
+    }
 }
 
 CartPoleV1Controller::~CartPoleV1Controller()
@@ -147,6 +184,15 @@ void CartPoleV1Controller::startTraining()
     setIsTraining(true);
     setStatus("Starting training...");
     setTrainingProgress(0.0);
+
+    // Очищаем файл логирования и записываем заголовок
+    QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QFile logFile(documentsPath + "/cartpole.txt");
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&logFile);
+        out << "Episode,AverageReturn,EpisodeReturn,Epsilon,Timestamp\n";
+        logFile.close();
+    }
 
     // Create training thread
     m_trainingThread = new QThread(this);
@@ -211,10 +257,32 @@ void CartPoleV1Controller::resetSimulation()
 
 void CartPoleV1Controller::onTrainingProgress(int episode, double averageReturn, double episodeReturn, double epsilon)
 {
-    setTrainingProgress(static_cast<double>(episode) / 2000.0 * 100.0);
-    setStatus(QString("Training: Episode %1, Avg Return: %2")
+    // Вычисляем прогресс на основе достижения целевого среднего
+    double targetProgress = (averageReturn / m_targetAverageReturn) * 100.0;
+    targetProgress = qMin(targetProgress, 100.0); // Ограничиваем максимум 100%
+    
+    // Обновляем прогресс только если он увеличился
+    if (targetProgress > m_trainingProgress) {
+        setTrainingProgress(targetProgress);
+    }
+    
+    setStatus(QString("Training: Episode %1, Avg Return: %2 (Target: %3)")
               .arg(episode)
-              .arg(averageReturn, 0, 'f', 2));
+              .arg(averageReturn, 0, 'f', 2)
+              .arg(m_targetAverageReturn));
+    
+    // Логируем в файл
+    QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QFile logFile(documentsPath + "/cartpole.txt");
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+        QTextStream out(&logFile);
+        out << episode << "," 
+            << QString::number(averageReturn, 'f', 6) << "," 
+            << QString::number(episodeReturn, 'f', 6) << "," 
+            << QString::number(epsilon, 'f', 6) << ","
+            << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss") << "\n";
+        logFile.close();
+    }
 }
 
 void CartPoleV1Controller::onTrainingCompleted(bool converged, int totalEpisodes, double finalAverageReturn)

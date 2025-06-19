@@ -18,6 +18,7 @@ class MazeController : public QObject {
     Q_PROPERTY(int stepCount READ getStepCount NOTIFY stepCountChanged)
     Q_PROPERTY(QVariantList rewardHistory READ getRewardHistory NOTIFY rewardHistoryChanged)
     Q_PROPERTY(bool fastMode READ getFastMode WRITE setFastMode NOTIFY fastModeChanged)
+    Q_PROPERTY(double movingAverageReward READ getMovingAverageReward NOTIFY movingAverageRewardChanged)
 
 public:
     explicit MazeController(QObject *parent = nullptr);
@@ -45,6 +46,7 @@ public:
     QVariantList getRewardHistory() const;
     bool getFastMode() const;
     void setFastMode(bool enabled);
+    double getMovingAverageReward() const;
 
 signals:
     void mazeChanged();
@@ -57,6 +59,7 @@ signals:
     void trainingCompleted();
     void goalReached();
     void fastModeChanged();
+    void movingAverageRewardChanged();
 
 private slots:
     void trainStep();
@@ -79,6 +82,11 @@ private:
     
     // История для анализа
     QList<double> rewardHistory;
+    
+    // Скользящее среднее последних 100 эпизодов
+    QList<double> recentRewards;
+    const int movingAverageWindow = 100;
+    double movingAverageReward;
     
     // Настройки
     int trainingDelay; // Задержка между шагами в мс
